@@ -14,6 +14,9 @@ namespace HW_CW
 {
     public partial class Form1 : Form
     {
+
+        private NAIT_Program naitProgram;
+
         int WIDTH = 640;
         int HEIGHT = 480;
         Mat frame;
@@ -23,6 +26,8 @@ namespace HW_CW
 
         public Form1()
         {
+            naitProgram = new NAIT_Program();
+
             InitializeComponent();
             capture = new VideoCapture(0);
 
@@ -46,16 +51,13 @@ namespace HW_CW
 
             graphics = pictureBox1.CreateGraphics();
 
-            backgroundWorker1.RunWorkerAsync();
-
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-
         {
-            graphics.DrawImage(bmp, 0, 0, frame.Cols, frame.Rows);     
-        
+           graphics.DrawImage(bmp, 0, 0, frame.Cols, frame.Rows);     
         }
+
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
 
@@ -64,15 +66,15 @@ namespace HW_CW
 
             while (!backgroundWorker1.CancellationPending)
             {
-
                 capture.Grab();
 
                 NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, frame.CvPtr);
 
+                //backgroundWorker1_ProgressChangedを呼び出す、進行状況を知る必要がない場合はいらない
+                //今回はフォーマットに従い入れてある。。なくても動く
                 bw.ReportProgress(0);
-
             }
-        
+
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -80,6 +82,30 @@ namespace HW_CW
             backgroundWorker1.CancelAsync();
             while (backgroundWorker1.IsBusy)
                 Application.DoEvents();
+
+        }
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy != true)
+            {
+                backgroundWorker1.RunWorkerAsync();
+            }
+        }
+
+        private void buttonSTOP_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.WorkerSupportsCancellation == true)
+            {
+                // Cancel the asynchronous operation.
+                backgroundWorker1.CancelAsync();
+            }
+        }
+
+        private void buttonNaitLoad_Click(object sender, EventArgs e)
+        {
+
+            naitProgram.classificaition_example();
 
         }
     }
