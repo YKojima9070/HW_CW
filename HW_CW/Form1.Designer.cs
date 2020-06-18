@@ -1,6 +1,8 @@
 ﻿namespace HW_CW
 {
     partial class Form1
+//    class Form1
+
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -33,6 +35,10 @@
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonSTOP = new System.Windows.Forms.Button();
             this.buttonNaitLoad = new System.Windows.Forms.Button();
+            this.buttonTarDir = new System.Windows.Forms.Button();
+            this.textBoxTarDir = new System.Windows.Forms.TextBox();
+            this.buttonRdMod = new System.Windows.Forms.Button();
+            this.textBoxRdMd = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,10 +71,10 @@
             // 
             // buttonSTOP
             // 
-            this.buttonSTOP.Location = new System.Drawing.Point(668, 85);
+            this.buttonSTOP.Location = new System.Drawing.Point(847, 22);
             this.buttonSTOP.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSTOP.Name = "buttonSTOP";
-            this.buttonSTOP.Size = new System.Drawing.Size(154, 43);
+            this.buttonSTOP.Size = new System.Drawing.Size(154, 46);
             this.buttonSTOP.TabIndex = 2;
             this.buttonSTOP.Text = "STOP";
             this.buttonSTOP.UseVisualStyleBackColor = true;
@@ -76,7 +82,7 @@
             // 
             // buttonNaitLoad
             // 
-            this.buttonNaitLoad.Location = new System.Drawing.Point(668, 154);
+            this.buttonNaitLoad.Location = new System.Drawing.Point(665, 325);
             this.buttonNaitLoad.Name = "buttonNaitLoad";
             this.buttonNaitLoad.Size = new System.Drawing.Size(153, 43);
             this.buttonNaitLoad.TabIndex = 3;
@@ -84,11 +90,50 @@
             this.buttonNaitLoad.UseVisualStyleBackColor = true;
             this.buttonNaitLoad.Click += new System.EventHandler(this.buttonNaitLoad_Click);
             // 
+            // buttonTarDir
+            // 
+            this.buttonTarDir.Location = new System.Drawing.Point(668, 100);
+            this.buttonTarDir.Name = "buttonTarDir";
+            this.buttonTarDir.Size = new System.Drawing.Size(155, 45);
+            this.buttonTarDir.TabIndex = 4;
+            this.buttonTarDir.Text = "参照先フォルダ";
+            this.buttonTarDir.UseVisualStyleBackColor = true;
+            this.buttonTarDir.Click += new System.EventHandler(this.buttonTarDir_Click);
+            // 
+            // textBoxTarDir
+            // 
+            this.textBoxTarDir.Location = new System.Drawing.Point(666, 163);
+            this.textBoxTarDir.Name = "textBoxTarDir";
+            this.textBoxTarDir.Size = new System.Drawing.Size(334, 19);
+            this.textBoxTarDir.TabIndex = 5;
+            // 
+            // buttonRdMod
+            // 
+            this.buttonRdMod.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.buttonRdMod.Location = new System.Drawing.Point(668, 199);
+            this.buttonRdMod.Name = "buttonRdMod";
+            this.buttonRdMod.Size = new System.Drawing.Size(150, 45);
+            this.buttonRdMod.TabIndex = 6;
+            this.buttonRdMod.Text = "モデル読込";
+            this.buttonRdMod.UseVisualStyleBackColor = true;
+            this.buttonRdMod.Click += new System.EventHandler(this.buttonRdMod_Click);
+            // 
+            // textBoxRdMd
+            // 
+            this.textBoxRdMd.Location = new System.Drawing.Point(666, 262);
+            this.textBoxRdMd.Name = "textBoxRdMd";
+            this.textBoxRdMd.Size = new System.Drawing.Size(333, 19);
+            this.textBoxRdMd.TabIndex = 7;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 461);
+            this.ClientSize = new System.Drawing.Size(1021, 499);
+            this.Controls.Add(this.textBoxRdMd);
+            this.Controls.Add(this.buttonRdMod);
+            this.Controls.Add(this.textBoxTarDir);
+            this.Controls.Add(this.buttonTarDir);
             this.Controls.Add(this.buttonNaitLoad);
             this.Controls.Add(this.buttonSTOP);
             this.Controls.Add(this.buttonStart);
@@ -99,6 +144,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -109,6 +155,10 @@
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Button buttonSTOP;
         private System.Windows.Forms.Button buttonNaitLoad;
+        private System.Windows.Forms.Button buttonTarDir;
+        private System.Windows.Forms.TextBox textBoxTarDir;
+        private System.Windows.Forms.Button buttonRdMod;
+        private System.Windows.Forms.TextBox textBoxRdMd;
     }
 }
 

@@ -13,6 +13,7 @@ using OpenCvSharp;
 namespace HW_CW
 {
     public partial class Form1 : Form
+    //public class Form1 : Form
     {
 
         private NAIT_Program naitProgram;
@@ -105,8 +106,43 @@ namespace HW_CW
         private void buttonNaitLoad_Click(object sender, EventArgs e)
         {
 
-            naitProgram.classificaition_example();
+            //naitProgram.classificaition_example();
+            NAIT_Program.classificaition_example();
+
 
         }
+
+        private void buttonTarDir_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            fbd.Description = "フォルダを指定してください。";
+
+            fbd.RootFolder = Environment.SpecialFolder.Desktop;
+
+            if (fbd.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxTarDir.Clear();
+                textBoxTarDir.AppendText(fbd.SelectedPath);
+
+            }
+        }
+
+        private void buttonRdMod_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            ofd.Filter = "学習モデル(*.net)|*.net|すべてのファイル(*.*)|*.*";
+            ofd.Title = "開くファイルを選択して下さい。";
+
+            if (ofd.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxRdMd.Clear();
+                textBoxRdMd.AppendText(ofd.FileName);
+            }
+
+
+        }
+
     }
 }

@@ -12,11 +12,13 @@ namespace HW_CW
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
         [STAThread]
+
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
+        
     }
 }

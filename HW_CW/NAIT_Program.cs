@@ -11,11 +11,11 @@ namespace HW_CW
     class NAIT_Program
     {
 
-        public void classificaition_example()
+        //public void classificaition_example()
+        public static void classificaition_example()
+ 
         {
-
-
-            string image_dir = "../../example_data/cls_ex_img/";
+            string image_dir = "./example_data/cls_ex_img/";
             List<string> imagePaths = new List<string>();
             for (int i = 0; i < 6; i++)
             {
@@ -36,7 +36,7 @@ namespace HW_CW
             /* 
             Trained Model File Path
             */
-            string model_path = "../../example_data/cls_ex_model.net";
+            string model_path = "./example_data/cls_ex_model.net";
 
             /*
             Initialize the Model object through the trained model file.
@@ -301,11 +301,12 @@ namespace HW_CW
         }
 
 
-
-        //static void Main(string[] args)
-        //{
-        //    classificaition_example();
-        //}
+        /*
+        static void Main(string[] args)
+        {
+            classificaition_example();
+        }
+        */
     }
 
 }
