@@ -16,30 +16,30 @@ namespace HW_CW
     //public class Form1 : Form
     {
 
+        //private NAIT_Program nait_program;
+        //private List<string> str;
+
+ 
         int WIDTH = 640;
         int HEIGHT = 480;
         Mat frame;
         VideoCapture capture;
         Bitmap bmp;
         Graphics graphics;
-        //MjpegProcessor.MjpegDecoder _mjpeg;
 
 
         public Form1()
         {
             InitializeComponent();
   
- 
-            //_mjpeg = new MjpegProcessor.MjpegDecoder();
-            //_mjpeg.FrameReady += mjpeg_FrameReady;
-
         }
 
+        /*
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
            graphics.DrawImage(bmp, 0, 0, frame.Cols, frame.Rows);     
         }
-
+        */
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
 
@@ -54,17 +54,17 @@ namespace HW_CW
 
                 //backgroundWorker1_ProgressChangedを呼び出す、進行状況を知る必要がない場合はいらない
                 //今回はフォーマットに従い入れてある。。なくても動く
-                bw.ReportProgress(0);
-            }
+                //bw.ReportProgress(0);
 
+                graphics.DrawImage(bmp, 0, 0, frame.Cols, frame.Rows);
+            }
         }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             backgroundWorker1.CancelAsync();
             while (backgroundWorker1.IsBusy)
                 Application.DoEvents();
-
         }
 
         private void buttonStart_Click(object sender, EventArgs e)
@@ -108,9 +108,14 @@ namespace HW_CW
 
         private void buttonNaitLoad_Click(object sender, EventArgs e)
         {
+            NAIT_Program nait_program = new NAIT_Program();
+            List<string> image_path = nait_program.imagePaths();
 
-            //naitProgram.classificaition_example();
-            NAIT_Program.segmentation_example();
+            nait_program.model_read(image_path);
+
+            Console.WriteLine(image_path);
+
+
 
 
         }
@@ -150,10 +155,6 @@ namespace HW_CW
 
             string url = textBoxNetCamAddr.Text;
             vlcControl1.Play(new Uri(@url));
-
-            //string url = @"rtsp://192.168.1.9:554/stream2/sensor1";
-            //Console.WriteLine(url);
-            //_mjpeg.ParseStream(new Uri(url));
 
         }
 
