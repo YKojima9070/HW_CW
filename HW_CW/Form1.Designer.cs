@@ -30,6 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.buttonStart = new System.Windows.Forms.Button();
@@ -39,7 +40,11 @@
             this.textBoxTarDir = new System.Windows.Forms.TextBox();
             this.buttonRdMod = new System.Windows.Forms.Button();
             this.textBoxRdMd = new System.Windows.Forms.TextBox();
+            this.buttonNetCam = new System.Windows.Forms.Button();
+            this.textBoxNetCamAddr = new System.Windows.Forms.TextBox();
+            this.vlcControl1 = new Vlc.DotNet.Forms.VlcControl();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.vlcControl1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -65,7 +70,7 @@
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(155, 46);
             this.buttonStart.TabIndex = 1;
-            this.buttonStart.Text = "START";
+            this.buttonStart.Text = "USB CAM START";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
@@ -82,7 +87,7 @@
             // 
             // buttonNaitLoad
             // 
-            this.buttonNaitLoad.Location = new System.Drawing.Point(665, 325);
+            this.buttonNaitLoad.Location = new System.Drawing.Point(665, 443);
             this.buttonNaitLoad.Name = "buttonNaitLoad";
             this.buttonNaitLoad.Size = new System.Drawing.Size(153, 43);
             this.buttonNaitLoad.TabIndex = 3;
@@ -92,7 +97,7 @@
             // 
             // buttonTarDir
             // 
-            this.buttonTarDir.Location = new System.Drawing.Point(668, 100);
+            this.buttonTarDir.Location = new System.Drawing.Point(665, 202);
             this.buttonTarDir.Name = "buttonTarDir";
             this.buttonTarDir.Size = new System.Drawing.Size(155, 45);
             this.buttonTarDir.TabIndex = 4;
@@ -102,7 +107,7 @@
             // 
             // textBoxTarDir
             // 
-            this.textBoxTarDir.Location = new System.Drawing.Point(666, 163);
+            this.textBoxTarDir.Location = new System.Drawing.Point(665, 253);
             this.textBoxTarDir.Name = "textBoxTarDir";
             this.textBoxTarDir.Size = new System.Drawing.Size(334, 19);
             this.textBoxTarDir.TabIndex = 5;
@@ -110,7 +115,7 @@
             // buttonRdMod
             // 
             this.buttonRdMod.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.buttonRdMod.Location = new System.Drawing.Point(668, 199);
+            this.buttonRdMod.Location = new System.Drawing.Point(668, 296);
             this.buttonRdMod.Name = "buttonRdMod";
             this.buttonRdMod.Size = new System.Drawing.Size(150, 45);
             this.buttonRdMod.TabIndex = 6;
@@ -120,16 +125,49 @@
             // 
             // textBoxRdMd
             // 
-            this.textBoxRdMd.Location = new System.Drawing.Point(666, 262);
+            this.textBoxRdMd.Location = new System.Drawing.Point(668, 347);
             this.textBoxRdMd.Name = "textBoxRdMd";
             this.textBoxRdMd.Size = new System.Drawing.Size(333, 19);
             this.textBoxRdMd.TabIndex = 7;
+            // 
+            // buttonNetCam
+            // 
+            this.buttonNetCam.Location = new System.Drawing.Point(668, 80);
+            this.buttonNetCam.Name = "buttonNetCam";
+            this.buttonNetCam.Size = new System.Drawing.Size(154, 43);
+            this.buttonNetCam.TabIndex = 8;
+            this.buttonNetCam.Text = "NetworkCAM START";
+            this.buttonNetCam.UseVisualStyleBackColor = true;
+            this.buttonNetCam.Click += new System.EventHandler(this.buttonNetCam_Click);
+            // 
+            // textBoxNetCamAddr
+            // 
+            this.textBoxNetCamAddr.Location = new System.Drawing.Point(668, 134);
+            this.textBoxNetCamAddr.Name = "textBoxNetCamAddr";
+            this.textBoxNetCamAddr.Size = new System.Drawing.Size(330, 19);
+            this.textBoxNetCamAddr.TabIndex = 9;
+            this.textBoxNetCamAddr.Text = "rtsp://192.168.1.9:554/stream2/sensor1";
+            // 
+            // vlcControl1
+            // 
+            this.vlcControl1.BackColor = System.Drawing.Color.Black;
+            this.vlcControl1.Location = new System.Drawing.Point(176, 224);
+            this.vlcControl1.Name = "vlcControl1";
+            this.vlcControl1.Size = new System.Drawing.Size(469, 263);
+            this.vlcControl1.Spu = -1;
+            this.vlcControl1.TabIndex = 10;
+            this.vlcControl1.Text = "vlcControl1";
+            this.vlcControl1.VlcLibDirectory = ((System.IO.DirectoryInfo)(resources.GetObject("vlcControl1.VlcLibDirectory")));
+            this.vlcControl1.VlcMediaplayerOptions = null;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1021, 499);
+            this.Controls.Add(this.vlcControl1);
+            this.Controls.Add(this.textBoxNetCamAddr);
+            this.Controls.Add(this.buttonNetCam);
             this.Controls.Add(this.textBoxRdMd);
             this.Controls.Add(this.buttonRdMod);
             this.Controls.Add(this.textBoxTarDir);
@@ -143,6 +181,7 @@
             this.Text = "ImageViewer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.vlcControl1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -159,6 +198,9 @@
         private System.Windows.Forms.TextBox textBoxTarDir;
         private System.Windows.Forms.Button buttonRdMod;
         private System.Windows.Forms.TextBox textBoxRdMd;
+        private System.Windows.Forms.Button buttonNetCam;
+        private System.Windows.Forms.TextBox textBoxNetCamAddr;
+        private Vlc.DotNet.Forms.VlcControl vlcControl1;
     }
 }
 

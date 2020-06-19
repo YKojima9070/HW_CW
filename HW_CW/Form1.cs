@@ -16,41 +16,22 @@ namespace HW_CW
     //public class Form1 : Form
     {
 
-        private NAIT_Program naitProgram;
-
         int WIDTH = 640;
         int HEIGHT = 480;
         Mat frame;
         VideoCapture capture;
         Bitmap bmp;
         Graphics graphics;
+        //MjpegProcessor.MjpegDecoder _mjpeg;
+
 
         public Form1()
         {
-            naitProgram = new NAIT_Program();
-
             InitializeComponent();
-            capture = new VideoCapture(0);
-
-            if (!capture.IsOpened())
-            {
-                MessageBox.Show("camera was not found!");
-                this.Close();
-
-            }
-
-            capture.FrameWidth = WIDTH;
-            capture.FrameHeight = HEIGHT;
-
-
-            frame = new Mat(HEIGHT, WIDTH, MatType.CV_8UC3);
-
-            bmp = new Bitmap(frame.Cols, frame.Rows, (int)frame.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, frame.Data);
-
-            pictureBox1.Width = frame.Cols;
-            pictureBox1.Height = frame.Rows;
-
-            graphics = pictureBox1.CreateGraphics();
+  
+ 
+            //_mjpeg = new MjpegProcessor.MjpegDecoder();
+            //_mjpeg.FrameReady += mjpeg_FrameReady;
 
         }
 
@@ -90,6 +71,28 @@ namespace HW_CW
         {
             if (backgroundWorker1.IsBusy != true)
             {
+                capture = new VideoCapture(0);
+
+                if (!capture.IsOpened())
+                {
+                    MessageBox.Show("camera was not found!");
+                    this.Close();
+
+                }
+
+                capture.FrameWidth = WIDTH;
+                capture.FrameHeight = HEIGHT;
+
+
+                frame = new Mat(HEIGHT, WIDTH, MatType.CV_8UC3);
+
+                bmp = new Bitmap(frame.Cols, frame.Rows, (int)frame.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, frame.Data);
+
+                pictureBox1.Width = frame.Cols;
+                pictureBox1.Height = frame.Rows;
+
+                graphics = pictureBox1.CreateGraphics();
+
                 backgroundWorker1.RunWorkerAsync();
             }
         }
@@ -107,7 +110,7 @@ namespace HW_CW
         {
 
             //naitProgram.classificaition_example();
-            NAIT_Program.classificaition_example();
+            NAIT_Program.segmentation_example();
 
 
         }
@@ -140,9 +143,23 @@ namespace HW_CW
                 textBoxRdMd.Clear();
                 textBoxRdMd.AppendText(ofd.FileName);
             }
+        }
 
+        private void buttonNetCam_Click(object sender, EventArgs e)
+        {
+
+            string url = textBoxNetCamAddr.Text;
+            vlcControl1.Play(new Uri(@url));
+
+            //string url = @"rtsp://192.168.1.9:554/stream2/sensor1";
+            //Console.WriteLine(url);
+            //_mjpeg.ParseStream(new Uri(url));
 
         }
 
+        private void vlcControl1_VlcLibDirectoryNeeded(object sender, Vlc.DotNet.Forms.VlcLibDirectoryNeededEventArgs e)
+        {
+            e.VlcLibDirectory = new System.IO.DirectoryInfo(@"./Debug");
+        }
     }
 }
