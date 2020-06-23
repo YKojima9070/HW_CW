@@ -29,10 +29,12 @@ namespace HW_CW
         Graphics graphics;
         List<string> imagePathsList = null;
         nrt.InterpolationType resize_method;
-        nrt.Shape input_image_shape;
-        bool patch_mode;
-        float scale_factor;
-
+        nrt.Shape input_image_shape = null;
+        bool patch_mode = false;
+        float scale_factor = 0;
+        nrt.Status status;
+        nrt.Executor executor;
+        int num_classes = 0;
 
 
         public Form1()
@@ -146,7 +148,7 @@ namespace HW_CW
 
                 //Load example images for example code
 
-                imagePathsList.Add(image_dir + i + ".png");
+                imagePathsList.Add(image_dir + "\\" + i + ".png");
             }
 
             //If the original image is larger than the patch size, it cannot be used as an input immediately, but should be used as an input after patching as
@@ -180,7 +182,7 @@ namespace HW_CW
 
             for (int i = 0; i < imagePathsList.Count; i += batch_size)
             {
-                int current_batch_size = Math.Min(batch_size, imagePaths.Count - i);
+                int current_batch_size = Math.Min(batch_size, imagePathsList.Count - i);
 
                 string image_paths = "";
                 for (int j = 0; j < current_batch_size; j++)
@@ -362,6 +364,8 @@ namespace HW_CW
                     return;
                 }
 
+                
+
             }
 
 
@@ -402,7 +406,7 @@ namespace HW_CW
 
             //以下NAIT
 
-            nrt.Status status;
+            //nrt.Status status;
             
             //Trained Model File Path
             
@@ -439,7 +443,7 @@ namespace HW_CW
             
             int num_inputs = model.get_num_inputs();
 
-            nrt.Shape input_image_shape = model.get_input_shape(0);
+            input_image_shape = model.get_input_shape(0);
             Console.Write(model.get_input_name(0) + " [");
             for (int j = 0; j < input_image_shape.num_dim; j++)
                 Console.Write(input_image_shape.get_axis(j) + " ");
@@ -450,9 +454,9 @@ namespace HW_CW
             resize_method = model.get_InterpolationType(0);
 
 
-            bool patch_mode = model.is_patch_mode(0);
+            patch_mode = model.is_patch_mode(0);
 
-            float scale_factor = model.get_scale_factor();
+            scale_factor = model.get_scale_factor();
             if (patch_mode)
             {
                 Console.WriteLine("scale_factor " + scale_factor);
@@ -494,7 +498,7 @@ namespace HW_CW
             //Creating model and executor objects can take up to tens of seconds.
             
 
-            nrt.Executor executor = new nrt.Executor(model, dev, batch_size);
+            executor = new nrt.Executor(model, dev, batch_size);
             if (executor.get_status() != nrt.Status.STATUS_SUCCESS)
             {
                 Console.WriteLine("Executor initialization failed. : " + nrt.nrt.get_last_error_msg());
