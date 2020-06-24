@@ -61,7 +61,6 @@
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            //this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
             // 
             // buttonStart
             // 
@@ -151,9 +150,9 @@
             // vlcControl1
             // 
             this.vlcControl1.BackColor = System.Drawing.Color.Black;
-            this.vlcControl1.Location = new System.Drawing.Point(176, 224);
+            this.vlcControl1.Location = new System.Drawing.Point(861, 414);
             this.vlcControl1.Name = "vlcControl1";
-            this.vlcControl1.Size = new System.Drawing.Size(469, 263);
+            this.vlcControl1.Size = new System.Drawing.Size(92, 72);
             this.vlcControl1.Spu = -1;
             this.vlcControl1.TabIndex = 10;
             this.vlcControl1.Text = "vlcControl1";

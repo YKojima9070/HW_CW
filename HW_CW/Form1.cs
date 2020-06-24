@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using OpenCvSharp;
-
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace HW_CW
 {
@@ -22,19 +25,24 @@ namespace HW_CW
 
         int WIDTH = 640;
         int HEIGHT = 480;
-        int batch_size = 1;
+
         Mat frame;
         VideoCapture capture;
         Bitmap bmp;
         Graphics graphics;
-        List<string> imagePathsList = null;
-        nrt.InterpolationType resize_method;
-        nrt.Shape input_image_shape = null;
-        bool patch_mode = false;
-        float scale_factor = 0;
+
+
         nrt.Status status;
+        int batch_size;
+
+        List<string> imagePaths = null;
+        nrt.InterpolationType resize_method;
+        nrt.Shape input_image_shape;
+        bool patch_mode = false;
+        float scale_factor;
         nrt.Executor executor;
         int num_classes = 0;
+
 
 
         public Form1()
@@ -140,7 +148,11 @@ namespace HW_CW
 
             }
 
-            imagePathsList = new List<string>();
+
+            //以下NAIT
+
+
+            imagePaths = new List<string>();
 
             string image_dir = fbd.SelectedPath;
             for (int i = 0; i < 8; i++)
@@ -148,8 +160,10 @@ namespace HW_CW
 
                 //Load example images for example code
 
-                imagePathsList.Add(image_dir + "\\" + i + ".png");
+                imagePaths.Add(image_dir + "\\" + i + ".png");
             }
+
+            //モデルロードは別にしてあります
 
             //If the original image is larger than the patch size, it cannot be used as an input immediately, but should be used as an input after patching as
 
@@ -177,17 +191,18 @@ namespace HW_CW
             int height_thres = 16;
             int width_thres = 16;
             int thres_cond = 0;
+
             nrt.NDBuffer size_threshold_buf = nrt.NDBuffer.make_size_thres(height_thres, width_thres, thres_cond);
             nrt.NDBuffer bounding_rects = new nrt.NDBuffer();
 
-            for (int i = 0; i < imagePathsList.Count; i += batch_size)
+            for (int i = 0; i < imagePaths.Count; i += batch_size)
             {
-                int current_batch_size = Math.Min(batch_size, imagePathsList.Count - i);
+                int current_batch_size = Math.Min(batch_size, imagePaths.Count - i);
 
                 string image_paths = "";
                 for (int j = 0; j < current_batch_size; j++)
                 {
-                    image_paths += imagePathsList[i + j] + "\n";
+                    image_paths += imagePaths[i + j] + "\n";
                 }
 
 
@@ -348,7 +363,6 @@ namespace HW_CW
                     int rect_class_index = bounding_rects_buff[6 * j + 5];
 
                     Console.WriteLine(" x : " + rect_x + " y : " + rect_y + " height : " + rect_h + " width : " + rect_w + " class idx : " + rect_class_index);
-
                 }
 
 
@@ -357,6 +371,10 @@ namespace HW_CW
 
                 byte[] output_buff = new byte[merged_output.get_total_size()];
 
+                //byte>>ImageData
+
+ 
+
                 actual_copy_size = merged_output.copy_to_buffer_uint8(output_buff, (ulong)output_buff.Length);
                 if (actual_copy_size != output_buff.Length)
                 {
@@ -364,12 +382,34 @@ namespace HW_CW
                     return;
                 }
 
-                
+                Bitmap img = new Bitmap(512, 512, PixelFormat.Format8bppIndexed);
+                BitmapData bmpData = img.LockBits(new Rectangle(0, 0, 512, 512),
+                ImageLockMode.WriteOnly,
+                img.PixelFormat);
+                Marshal.Copy(output_buff, 0, bmpData.Scan0, output_buff.Length);
+                img.UnlockBits(bmpData);
+
+
+                graphics = pictureBox1.CreateGraphics();
+                graphics.DrawImage(img, 0, 0, 512, 512);
+
+
+                Thread.Sleep(1000);
+
+
+
 
             }
-
-
         }
+
+        
+        public static Image ByteArrayToImage(byte[] b)
+        {
+            ImageConverter imgconv = new ImageConverter();
+            Image img = (Image)imgconv.ConvertFrom(b);
+            return img;
+        }
+
 
 
         private void buttonTarDir_Click(object sender, EventArgs e)
@@ -425,7 +465,7 @@ namespace HW_CW
            
             //Print the number of classes and class names assigned to each class index
             
-            int num_classes = model.get_num_classes();
+            num_classes = model.get_num_classes();
             Console.WriteLine("num_classes " + num_classes);
             for (int i = 0; i < num_classes; i++)
             {
@@ -484,7 +524,7 @@ namespace HW_CW
             
             nrt.Device dev = nrt.Device.get_device(0);
 
-           
+            batch_size = 1;
             //int batch_size = 1;
 
             
