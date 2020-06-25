@@ -12,6 +12,11 @@ using System.IO;
 using OpenCvSharp;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Net;
+using RtspClientSharp;
+using RtspClientSharp.RawFrames.Video;
+using RtspClientSharp.RawFrames.Audio;
+using RtspClientSharp.Rtsp;
 
 namespace HW_CW
 {
@@ -31,7 +36,6 @@ namespace HW_CW
         Bitmap bmp;
         Graphics graphics;
 
-
         nrt.Status status;
         int batch_size;
 
@@ -43,10 +47,14 @@ namespace HW_CW
         nrt.Executor executor;
         int num_classes = 0;
 
+        WebRequest wr;
+        WebResponse res;
+
 
 
         public Form1()
         {
+
             InitializeComponent();
 
         }
@@ -67,6 +75,9 @@ namespace HW_CW
             {
                 capture.Grab();
 
+
+                Cv2.ImShow("Frame", frame);
+                Cv2.WaitKey(5);
                 NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, frame.CvPtr);
 
                 //backgroundWorker1_ProgressChangedを呼び出す、進行状況を知る必要がない場合はいらない
@@ -88,7 +99,7 @@ namespace HW_CW
         {
             if (backgroundWorker1.IsBusy != true)
             {
-                capture = new VideoCapture(0);
+                capture = new VideoCapture(@"rtsp://192.168.1.9:554/stream2/sensor1");
 
                 if (!capture.IsOpened())
                 {
@@ -97,16 +108,19 @@ namespace HW_CW
 
                 }
 
-                capture.FrameWidth = WIDTH;
-                capture.FrameHeight = HEIGHT;
+                //capture.FrameWidth = WIDTH;
+                //capture.FrameHeight = HEIGHT;
 
 
-                frame = new Mat(HEIGHT, WIDTH, MatType.CV_8UC3);
+                //frame = new Mat(HEIGHT, WIDTH, MatType.CV_8UC3);
+                Mat frame = new Mat();
 
-                bmp = new Bitmap(frame.Cols, frame.Rows, (int)frame.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, frame.Data);
+ 
 
-                pictureBox1.Width = frame.Cols;
-                pictureBox1.Height = frame.Rows;
+                //bmp = new Bitmap(frame.Cols, frame.Rows, (int)frame.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, frame.Data);
+
+                //pictureBox1.Width = frame.Cols;
+                //pictureBox1.Height = frame.Rows;
 
                 graphics = pictureBox1.CreateGraphics();
 
@@ -150,8 +164,6 @@ namespace HW_CW
 
 
             //以下NAIT
-
-
             imagePaths = new List<string>();
 
             string image_dir = fbd.SelectedPath;
@@ -161,9 +173,10 @@ namespace HW_CW
                 //Load example images for example code
 
                 imagePaths.Add(image_dir + "\\" + i + ".png");
+
             }
 
-            //モデルロードは別にしてあります
+            //モデルロードは別
 
             //If the original image is larger than the patch size, it cannot be used as an input immediately, but should be used as an input after patching as
 
@@ -321,7 +334,6 @@ namespace HW_CW
                 nrt.Shape merged_output_shape = merged_output.get_shape();
                 nrt.DType merged_output_dtype = merged_output.get_dtype();
 
-
                 //Threshold the predictions by height and width.
 
                 status = nrt.nrt.pred_map_threshold_by_size(merged_output, bounding_rects, size_threshold_buf, num_classes);
@@ -330,6 +342,7 @@ namespace HW_CW
                     Console.WriteLine("pred_map_threshold_by_size failed.  : " + nrt.nrt.get_last_error_msg());
                     return;
                 }
+
                 nrt.Shape bounding_rects_shape = bounding_rects.get_shape();
 
                 int[] bounding_rects_buff = new int[bounding_rects.get_total_size()];
@@ -352,29 +365,25 @@ namespace HW_CW
                 //  4 : Width of detection area rectangle
                 //  5 : Class index of the detection area rectangle
 
-                for (int j = 0; j < bounding_rects_shape.get_axis(0); j++)
-                {
+                //for (int j = 0; j < bounding_rects_shape.get_axis(0); j++)
+                //{
 
-                    int image_batch_index = bounding_rects_buff[6 * j + 0];
-                    int rect_x = bounding_rects_buff[6 * j + 1];
-                    int rect_y = bounding_rects_buff[6 * j + 2];
-                    int rect_h = bounding_rects_buff[6 * j + 3];
-                    int rect_w = bounding_rects_buff[6 * j + 4];
-                    int rect_class_index = bounding_rects_buff[6 * j + 5];
+                //    int image_batch_index = bounding_rects_buff[6 * j + 0];
+                //    int rect_x = bounding_rects_buff[6 * j + 1];
+                //    int rect_y = bounding_rects_buff[6 * j + 2];
+                //    int rect_h = bounding_rects_buff[6 * j + 3];
+                //    int rect_w = bounding_rects_buff[6 * j + 4];
+                //    int rect_class_index = bounding_rects_buff[6 * j + 5];
 
-                    Console.WriteLine(" x : " + rect_x + " y : " + rect_y + " height : " + rect_h + " width : " + rect_w + " class idx : " + rect_class_index);
-                }
+                //    Console.WriteLine(" x : " + rect_x + " y : " + rect_y + " height : " + rect_h + " width : " + rect_w + " class idx : " + rect_class_index);
+                //}
 
 
                 //Since the DType value of the prediction map is DTYPE_UINT8, you can get the byte data from the NDBuffer and check the actual image value.
                 //The background area is 0. A value with class index of 0 means background    
 
                 byte[] output_buff = new byte[merged_output.get_total_size()];
-
-                //byte>>ImageData
-
  
-
                 actual_copy_size = merged_output.copy_to_buffer_uint8(output_buff, (ulong)output_buff.Length);
                 if (actual_copy_size != output_buff.Length)
                 {
@@ -382,31 +391,37 @@ namespace HW_CW
                     return;
                 }
 
-                Bitmap img = new Bitmap(512, 512, PixelFormat.Format8bppIndexed);
-                BitmapData bmpData = img.LockBits(new Rectangle(0, 0, 512, 512),
-                ImageLockMode.WriteOnly,
-                img.PixelFormat);
-                Marshal.Copy(output_buff, 0, bmpData.Scan0, output_buff.Length);
-                img.UnlockBits(bmpData);
+               
+                Image result_img = ByteArrayToImage(output_buff);
+                Image base_img = Image.FromFile(image_paths);
+
+                Bitmap result_img2 = new Bitmap(result_img);
+                Bitmap base_img2 = new Bitmap(base_img);
+
+                result_img2.MakeTransparent(Color.Black);
+
+                Graphics g = Graphics.FromImage(base_img2);
+                g.DrawImage(result_img2, 0, 0, 512, 512);
+                g.Dispose();
+
+                pictureBox1.Image = base_img2;
+                pictureBox1.Update();
 
 
-                graphics = pictureBox1.CreateGraphics();
-                graphics.DrawImage(img, 0, 0, 512, 512);
-
-
-                Thread.Sleep(1000);
-
-
-
+                //Thread.Sleep(1000);
 
             }
         }
 
         
-        public static Image ByteArrayToImage(byte[] b)
+        public static Image ByteArrayToImage(byte[] output_b)
         {
-            ImageConverter imgconv = new ImageConverter();
-            Image img = (Image)imgconv.ConvertFrom(b);
+            Bitmap img = new Bitmap(512, 512, PixelFormat.Format8bppIndexed);
+
+            BitmapData bmpData = img.LockBits(new Rectangle(0, 0, 512, 512), ImageLockMode.WriteOnly, img.PixelFormat);
+            Marshal.Copy(output_b, 0, bmpData.Scan0, output_b.Length);
+            img.UnlockBits(bmpData);
+
             return img;
         }
 
@@ -446,13 +461,8 @@ namespace HW_CW
 
             //以下NAIT
 
-            //nrt.Status status;
-            
-            //Trained Model File Path
-            
-            string model_path = ofd.FileName;
-
-            
+             string model_path = ofd.FileName;
+                        
             //Initialize the Model object through the trained model file.
             
             nrt.Model model = new nrt.Model(model_path);
@@ -548,12 +558,46 @@ namespace HW_CW
         }
 
 
-        private void buttonNetCam_Click(object sender, EventArgs e)
+        private async void buttonNetCam_Click(object sender, EventArgs e)
         {
+            //var cancellationTokenSource = new CancellationTokenSource();
+            //CancellationToken token;
+            //var libDirectory = new DirectoryInfo("./Vlc.DotNet.Core.dll");
 
-            string url = textBoxNetCamAddr.Text;
-            vlcControl1.Play(new Uri(@url));
+            //using (var mediaPlayer = new Vlc.DotNet.Core.VlcMediaPlayer(libDirectory))
+            //{
 
+            //var mediaOptions = new[];
+            //{
+            //":sout=#rtp{sdp=rtsp://192.168.1.162:8008/test}",
+            //":sout-keep"
+            //};
+
+            //mediaPlayer.SetMedia(new Uri("rtsp://192.168.1.9:554/stream2/sensor1"));
+            //    mediaOptions);
+
+            //mediaPlayer.SetMedia(file, mediaOptions);
+
+            //vlcControl1.Play(new Uri(@url));
+
+            //mediaPlayer.Play();7
+            //Bitmap new_bit = new Bitmap(512, 512);
+            //Rectangle rect = new Rectangle(0, 0, 512, 512);
+
+            //vlcControl1.DrawToBitmap(new_bit, rect);
+
+            //pictureBox1.Image = new_bit;
+            //pictureBox1.Update();
+
+            wr = System.Net.WebRequest.Create(@"rtsp://192.168.1.9:554/stream2/sensor1");
+            wr.Timeout = 1000;
+            res = wr.GetResponse();
+            Bitmap stream_bit = new Bitmap(res.GetResponseStream());
+
+            pictureBox1.Image = stream_bit;
+            pictureBox1.Update();
+
+            
         }
 
         private void vlcControl1_VlcLibDirectoryNeeded(object sender, Vlc.DotNet.Forms.VlcLibDirectoryNeededEventArgs e)
@@ -563,12 +607,8 @@ namespace HW_CW
         
         }
 
-
-
     }
-
-
-    
+   
 }
 
 
